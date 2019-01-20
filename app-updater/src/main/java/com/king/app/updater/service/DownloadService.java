@@ -354,7 +354,7 @@ public class DownloadService extends Service {
 //        builder.setDeleteIntent(cancelIntent);
         builder.setContentIntent(cancelIntent);
         Notification notification = builder.build();
-        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONLY_ALERT_ONCE;
+        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_NO_CLEAR;
         notifyNotification(notifyId,notification);
     }
 
