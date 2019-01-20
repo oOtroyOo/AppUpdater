@@ -23,7 +23,7 @@ public class HttpManager implements IHttpManager {
     private int mTimeout = DEFAULT_TIME_OUT;
 
     private static HttpManager INSTANCE;
-
+    private DownloadTask downloadTask;
     public static HttpManager getInstance(){
         if(INSTANCE == null){
             synchronized (HttpManager.class){
@@ -44,9 +44,14 @@ public class HttpManager implements IHttpManager {
 
     @Override
     public void download(String url, String path, String filename, DownloadCallback callback) {
-        new DownloadTask(url,path,filename,callback).execute();
+        downloadTask= new DownloadTask(url,path,filename,callback);
+        downloadTask.execute();
     }
 
+    @Override
+    public void stop() {
+        downloadTask.cancel(true);
+    }
 
     /**
      * 异步下载任务

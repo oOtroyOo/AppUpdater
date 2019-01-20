@@ -18,6 +18,7 @@ public interface IHttpManager {
      */
     void download(String url,String path,String filename,DownloadCallback callback);
 
+    void stop();
 
     interface DownloadCallback extends Serializable{
         /**

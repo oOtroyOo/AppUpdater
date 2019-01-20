@@ -61,23 +61,26 @@ public class DownloadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(intent != null){
-            if(!isDownloading){
-                boolean isStop = intent.getBooleanExtra(Constants.KEY_STOP_DOWNLOAD_SERVICE,false);
-                if(isStop){
-                    stopService();
-                }else{
-                    //是否实通过通知栏触发重复下载
-                    boolean isReDownload = intent.getBooleanExtra(Constants.KEY_RE_DOWNLOAD,false);
-                    if(isReDownload){
-                        mCount++;
-                    }
-                    //获取配置信息
-                    UpdateConfig config =  intent.getParcelableExtra(Constants.KEY_UPDATE_CONFIG);
-                    startDownload(config,null,null);
+        if (intent != null) {
+            boolean isStop = intent.getBooleanExtra(Constants.KEY_STOP_DOWNLOAD_SERVICE, false);
+            if (isStop) {
+
+                    HttpManager.getInstance().stop();
+
+            }
+            if (!isDownloading) {
+
+                //是否实通过通知栏触发重复下载
+                boolean isReDownload = intent.getBooleanExtra(Constants.KEY_RE_DOWNLOAD, false);
+                if (isReDownload) {
+                    mCount++;
                 }
-            }else{
-                Log.w(Constants.TAG,"Please do not repeat the download.");
+                //获取配置信息
+                UpdateConfig config = intent.getParcelableExtra(Constants.KEY_UPDATE_CONFIG);
+                startDownload(config, null, null);
+
+            } else {
+                Log.w(Constants.TAG, "Please do not repeat the download.");
             }
         }
 
@@ -157,7 +160,7 @@ public class DownloadService extends Service {
     /**
      * 停止服务
      */
-    private void stopService(){
+    private void stopService() {
         mCount = 0;
         stopSelf();
     }
@@ -342,6 +345,14 @@ public class DownloadService extends Service {
     private void showProgressNotification(int notifyId,String channelId,@DrawableRes int icon,CharSequence title,CharSequence content,int progress,int size){
         NotificationCompat.Builder builder = buildNotification(channelId,icon,title,content,progress,size);
         builder.setAutoCancel(false);
+        Intent intent = new Intent();
+//        intent.setAction(Intent.ACTION_VIEW);
+        intent.setClass(getContext(), DownloadService.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(Constants.KEY_STOP_DOWNLOAD_SERVICE, true);
+        PendingIntent cancelIntent = PendingIntent.getService(getContext(), notifyId, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_UPDATE_CURRENT);
+//        builder.setDeleteIntent(cancelIntent);
+        builder.setContentIntent(cancelIntent);
         Notification notification = builder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_ONLY_ALERT_ONCE;
         notifyNotification(notifyId,notification);

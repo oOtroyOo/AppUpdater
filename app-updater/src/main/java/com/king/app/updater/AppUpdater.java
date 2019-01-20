@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.king.app.updater.callback.UpdateCallback;
 import com.king.app.updater.constant.Constants;
+import com.king.app.updater.http.HttpManager;
 import com.king.app.updater.http.IHttpManager;
 import com.king.app.updater.service.DownloadService;
 import com.king.app.updater.util.PermissionUtils;
@@ -108,6 +109,15 @@ public class AppUpdater {
             intent.putExtra(Constants.KEY_UPDATE_CONFIG,mConfig);
             mContext.startService(intent);
         }
+    }
+
+    public void stopDownload(){
+        if(mHttpManager!=null){
+            mHttpManager.stop();
+        }else if( HttpManager.getInstance()!=null){
+            HttpManager.getInstance().stop();
+        }
+
     }
 
 
