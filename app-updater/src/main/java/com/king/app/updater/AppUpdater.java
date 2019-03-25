@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.king.app.updater.callback.AppUpdateProgressCallback;
 import com.king.app.updater.callback.UpdateCallback;
 import com.king.app.updater.constant.Constants;
 import com.king.app.updater.http.HttpManager;
@@ -68,6 +69,9 @@ public class AppUpdater {
      * 开始下载
      */
     public void start(){
+        if(mCallback==null){
+            setUpdateCallback(new AppUpdateProgressCallback());
+        }
         if(mConfig!=null && !TextUtils.isEmpty(mConfig.getUrl())){
             //如果mContext是Activity,则默认会校验一次动态权限。
             if(mContext instanceof Activity){
